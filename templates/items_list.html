@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Browse items{% endblock %}
+{% block content %}
+<h1>Browse reports</h1>
+<form method="get" class="filters" id="filter-form">
+  <input type="search" name="q" id="q" value="{{ filters.q }}" placeholder="Title, description or location" aria-label="Search">
+  <select name="type" id="type" aria-label="Report type">
+    <option value="">Lost and found</option>
+    <option value="lost" {{ 'selected' if filters.type == 'lost' }}>Lost</option>
+    <option value="found" {{ 'selected' if filters.type == 'found' }}>Found</option>
+  </select>
+  <select name="category" id="category" aria-label="Category">
+    <option value="">All categories</option>
+    {% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if filters.category == c }}>{{ c }}</option>{% endfor %}
+  </select>
+  <select name="status" id="status" aria-label="Status">
+    <option value="">Any status</option>
+    {% for s in ITEM_STATUSES %}<option value="{{ s }}" {{ 'selected' if filters.status == s }}>{{ s }}</option>{% endfor %}
+  </select>
+  <button type="submit" class="btn" id="search-button">Search</button>
+  <a href="{{ url_for('items.list_items') }}" class="btn btn-secondary">Clear</a>
+</form>
+
+<p class="muted" id="result-count">{{ items|length }} report{{ '' if items|length == 1 else 's' }} found</p>
+{% if items %}
+  <div class="card-grid">
+    {% for item in items %}{{ m.item_card(item) }}{% endfor %}
+  </div>
+{% else %}
+  <p class="empty">No reports match your search. Try fewer words or clear the filters.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Manage items{% endblock %}
+{% block content %}
+<h1>Manage item reports</h1>
+<form method="get" class="filters">
+  <select name="status" aria-label="Filter by status">
+    <option value="">Any status</option>
+    {% for s in ITEM_STATUSES %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>{% endfor %}
+  </select>
+  <button type="submit" class="btn">Filter</button>
+</form>
+{% if items %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Item</th><th>Type</th><th>Reporter</th><th>Status</th><th>Claims</th><th>Change status</th><th></th></tr></thead>
+  <tbody>
+  {% for item in items %}
+    <tr>
+      <td><a href="{{ url_for('items.detail', item_id=item.id) }}">{{ item.title }}</a></td>
+      <td>{{ item.report_type|capitalize }}</td>
+      <td>{{ item.reporter_name }}</td>
+      <td>{{ m.badge(item.status) }}</td>
+      <td>{{ item.claim_count }}</td>
+      <td>
+        {% if transitions[item.status] %}
+        <form method="post" action="{{ url_for('admin.update_item_status', item_id=item.id) }}" class="inline-form">
+          {{ m.csrf() }}
+          <select name="status" aria-label="New status for {{ item.title }}">
+            {% for s in transitions[item.status] %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+          </select>
+          <button type="submit" class="btn btn-small">Update</button>
+        </form>
+        {% else %}<span class="muted small">Set by claim review</span>{% endif %}
+      </td>
+      <td>
+        <form method="post" action="{{ url_for('admin.delete_item', item_id=item.id) }}" class="inline-form"
+              data-confirm="Delete this report and all its claims? This cannot be undone.">
+          {{ m.csrf() }}
+          <button type="submit" class="btn btn-small btn-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">No item reports match this filter.</p>
+{% endif %}
+{% endblock %}

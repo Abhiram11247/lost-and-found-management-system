@@ -1,0 +1,56 @@
+{% import '_macros.html' as m %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}Home{% endblock %} - Campus Lost &amp; Found</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ url_for('items.index') }}">Campus Lost &amp; Found</a>
+      <nav class="nav" aria-label="Main">
+        <a href="{{ url_for('items.list_items') }}">Browse items</a>
+        {% if g.user %}
+          <a href="{{ url_for('items.report', report_type='lost') }}">Report lost</a>
+          <a href="{{ url_for('items.report', report_type='found') }}">Report found</a>
+          <a href="{{ url_for('items.my_items') }}">My reports</a>
+          <a href="{{ url_for('claims.my_claims') }}">My claims</a>
+          {% if g.user['role'] == 'admin' %}
+            <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+          {% endif %}
+          <span class="nav-user">{{ g.user['name'] }}</span>
+          <form method="post" action="{{ url_for('auth.logout') }}" class="inline-form">
+            {{ m.csrf() }}
+            <button type="submit" class="link-button" id="logout-button">Log out</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Log in</a>
+          <a class="btn btn-small" href="{{ url_for('auth.register') }}">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes" role="status">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">University Lost &amp; Found Management System</div>
+  </footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

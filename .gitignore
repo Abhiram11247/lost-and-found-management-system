@@ -1,18 +1,17 @@
-# Python cache files
-__pycache__/
-*.py[cod]
-
 # Virtual environment
 venv/
 .venv/
 
-# Environment variables and secrets
+# Python cache
+__pycache__/
+*.pyc
+
+# Local database and secrets (never commit these)
+*.db
+instance/
 .env
 
-# Local database files
-instance/*.db
-instance/*.sqlite
-instance/*.sqlite3
-
-# VS Code settings
+# Editor / OS files
 .vscode/
+.DS_Store
+Thumbs.db

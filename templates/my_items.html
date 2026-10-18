@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}My reports{% endblock %}
+{% block content %}
+<h1>My reports</h1>
+{% if items %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Item</th><th>Type</th><th>Date</th><th>Status</th><th>Claims</th><th>Submitted</th></tr></thead>
+  <tbody>
+  {% for item in items %}
+    <tr>
+      <td><a href="{{ url_for('items.detail', item_id=item.id) }}">{{ item.title }}</a></td>
+      <td>{{ item.report_type|capitalize }}</td>
+      <td>{{ item.event_date }}</td>
+      <td>{{ m.badge(item.status) }}</td>
+      <td>{{ item.claim_count }}</td>
+      <td>{{ item.created_at }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">You haven't reported anything yet.
+  <a href="{{ url_for('items.report', report_type='lost') }}">Report a lost item</a> or
+  <a href="{{ url_for('items.report', report_type='found') }}">report a found item</a>.</p>
+{% endif %}
+{% endblock %}

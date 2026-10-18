@@ -1,0 +1,15 @@
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}
+
+{% macro badge(text) %}<span class="badge badge-{{ text|lower|replace(' ', '-') }}">{{ text }}</span>{% endmacro %}
+
+{% macro item_card(item) %}
+<a class="tag-card tag-{{ item.report_type }}" href="{{ url_for('items.detail', item_id=item.id) }}">
+  <div class="tag-top">
+    <span class="tag-type">{{ item.report_type|capitalize }}</span>
+    {{ badge(item.status) }}
+  </div>
+  <h3>{{ item.title }}</h3>
+  <p class="muted">{{ item.category }} &middot; {{ item.location }}</p>
+  <p class="muted small">{{ 'Lost' if item.report_type == 'lost' else 'Found' }} on {{ item.event_date }}</p>
+</a>
+{% endmacro %}

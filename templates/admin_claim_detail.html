@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Claim #{{ claim.id }}{% endblock %}
+{% block content %}
+<h1>Claim #{{ claim.id }} {{ m.badge(claim.status) }}</h1>
+
+<div class="two-col">
+  <section class="panel">
+    <h2>Claimant</h2>
+    <p><strong>{{ claim.claimant }}</strong><br>{{ claim.claimant_email }}</p>
+    <h3>Their message</h3>
+    <p>{{ claim.message or 'No message provided.' }}</p>
+    <p class="muted small">Submitted {{ claim.created_at }}</p>
+  </section>
+
+  <section class="panel">
+    <h2>Item</h2>
+    <p><a href="{{ url_for('items.detail', item_id=item.id) }}"><strong>{{ item.title }}</strong></a> {{ m.badge(item.status) }}</p>
+    <p>{{ item.description }}</p>
+    <p class="muted small">{{ item.category }} &middot; found at {{ item.location }} on {{ item.event_date }} &middot; reported by {{ item.reporter_name }}</p>
+    {% if others %}
+      <h3>Other claims for this item</h3>
+      <ul class="plain">
+        {% for o in others %}
+          <li><a href="{{ url_for('admin.claim_detail', claim_id=o.id) }}">{{ o.claimant }}</a> {{ m.badge(o.status) }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+</div>
+
+{% if claim.status == 'Pending' %}
+<form method="post" action="{{ url_for('admin.decide', claim_id=claim.id) }}" class="decision">
+  {{ m.csrf() }}
+  <button type="submit" name="decision" value="approve" class="btn" id="approve-button">Approve claim</button>
+  <button type="submit" name="decision" value="reject" class="btn btn-danger" id="reject-button">Reject claim</button>
+</form>
+{% endif %}
+
+{% if item.status == 'Claim Verified' %}
+<form method="post" action="{{ url_for('admin.update_item_status', item_id=item.id) }}" class="decision">
+  {{ m.csrf() }}
+  <input type="hidden" name="status" value="Returned">
+  <button type="submit" class="btn btn-secondary" id="returned-button">Mark item as returned</button>
+</form>
+{% endif %}
+
+<p><a href="{{ url_for('admin.claims') }}">&larr; Back to claims</a></p>
+{% endblock %}

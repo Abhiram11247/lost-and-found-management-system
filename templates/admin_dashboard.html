@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Admin dashboard{% endblock %}
+{% block content %}
+<h1>Administrator dashboard</h1>
+<section class="stats">
+  <div><strong>{{ counts.pending_claims }}</strong> pending claims</div>
+  <div><strong>{{ counts.total_items }}</strong> item reports ({{ counts.lost_items }} lost, {{ counts.found_items }} found)</div>
+  <div><strong>{{ counts.returned_items }}</strong> returned</div>
+  <div><strong>{{ counts.users }}</strong> registered users</div>
+</section>
+
+<p>
+  <a class="btn" href="{{ url_for('admin.claims', status='Pending') }}">Review pending claims</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin.items') }}">Manage item reports</a>
+</p>
+
+<h2>Items by status</h2>
+<ul class="plain">
+  {% for s in ITEM_STATUSES %}<li>{{ m.badge(s) }} {{ by_status.get(s, 0) }}</li>{% endfor %}
+</ul>
+
+<h2>Oldest pending claims</h2>
+{% if pending %}
+<div class="table-wrap"><table>
+  <thead><tr><th>Item</th><th>Claimant</th><th>Submitted</th><th></th></tr></thead>
+  <tbody>
+  {% for c in pending %}
+    <tr><td>{{ c.item_title }}</td><td>{{ c.claimant }}</td><td>{{ c.created_at }}</td>
+        <td><a href="{{ url_for('admin.claim_detail', claim_id=c.id) }}">Review</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<p class="empty">No claims are waiting for review.</p>
+{% endif %}
+{% endblock %}

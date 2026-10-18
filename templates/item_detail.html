@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{{ item.title }}{% endblock %}
+{% block content %}
+<article class="detail tag-{{ item.report_type }}">
+  <div class="tag-top">
+    <span class="tag-type">{{ item.report_type|capitalize }}</span>
+    {{ m.badge(item.status) }}
+  </div>
+  <h1>{{ item.title }}</h1>
+  <p>{{ item.description }}</p>
+  <dl class="facts">
+    <dt>Category</dt><dd>{{ item.category }}</dd>
+    <dt>{{ 'Lost at' if item.report_type == 'lost' else 'Found at' }}</dt><dd>{{ item.location }}</dd>
+    <dt>{{ 'Date lost' if item.report_type == 'lost' else 'Date found' }}</dt><dd>{{ item.event_date }}</dd>
+    <dt>Reported by</dt><dd>{{ item.reporter_name }}</dd>
+    <dt>Report submitted</dt><dd>{{ item.created_at }}</dd>
+  </dl>
+</article>
+
+{% if item.report_type == 'found' %}
+<section class="form-card wide">
+  <h2>Is this yours?</h2>
+  {% if can_claim %}
+    <form method="post" action="{{ url_for('claims.submit', item_id=item.id) }}">
+      {{ m.csrf() }}
+      <label for="message">Explain why this item belongs to you <span class="muted small">(optional, but helps the administrator verify)</span></label>
+      <textarea id="message" name="message" rows="4" maxlength="1000" placeholder="Describe a detail only the owner would know."></textarea>
+      <button type="submit" class="btn" id="claim-button">Submit claim</button>
+    </form>
+  {% elif claim %}
+    <p>You already claimed this item. Claim status: {{ m.badge(claim.status) }}
+       <a href="{{ url_for('claims.my_claims') }}">View my claims</a></p>
+  {% else %}
+    <p class="muted">{{ claim_reason }}
+      {% if not g.user %}<a href="{{ url_for('auth.login', next=request.path) }}">Log in</a>{% endif %}</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<p><a href="{{ url_for('items.list_items') }}">&larr; Back to all reports</a></p>
+{% endblock %}

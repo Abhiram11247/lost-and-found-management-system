@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% set lost = report_type == 'lost' %}
+{% block title %}Report a {{ report_type }} item{% endblock %}
+{% block content %}
+<section class="form-card wide">
+  <h1>Report a {{ report_type }} item</h1>
+  <form method="post" novalidate>
+    {{ m.csrf() }}
+    <label for="title">Item name</label>
+    <input type="text" id="title" name="title" value="{{ values.title }}" maxlength="100" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+      <option value="">Choose a category</option>
+      {% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if values.category == c }}>{{ c }}</option>{% endfor %}
+    </select>
+
+    <label for="description">Description <span class="muted small">(colour, brand, marks, contents)</span></label>
+    <textarea id="description" name="description" rows="4" maxlength="1000" required>{{ values.description }}</textarea>
+
+    <label for="location">{{ 'Where did you lose it?' if lost else 'Where did you find it?' }}</label>
+    <input type="text" id="location" name="location" value="{{ values.location }}" maxlength="150" required>
+
+    <label for="event_date">{{ 'Date lost' if lost else 'Date found' }}</label>
+    <input type="date" id="event_date" name="event_date" value="{{ values.event_date }}" max="{{ today }}" required>
+
+    <button type="submit" class="btn" id="report-button">Submit {{ report_type }} report</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<section class="form-card">
+  <h1>Log in</h1>
+  <form method="post" novalidate>
+    {{ m.csrf() }}
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="{{ email }}" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit" class="btn" id="login-button">Log in</button>
+  </form>
+  <p class="muted">New here? <a href="{{ url_for('auth.register') }}">Create an account</a></p>
+</section>
+{% endblock %}

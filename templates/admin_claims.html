@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Review claims{% endblock %}
+{% block content %}
+<h1>Review claims</h1>
+<form method="get" class="filters">
+  <select name="status" aria-label="Filter by claim status">
+    <option value="">All claims</option>
+    <option value="Pending" {{ 'selected' if status == 'Pending' }}>Pending</option>
+    <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
+    <option value="Rejected" {{ 'selected' if status == 'Rejected' }}>Rejected</option>
+  </select>
+  <button type="submit" class="btn">Filter</button>
+</form>
+{% if claims %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Item</th><th>Claimant</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
+  <tbody>
+  {% for c in claims %}
+    <tr>
+      <td>{{ c.item_title }}</td><td>{{ c.claimant }}</td><td>{{ m.badge(c.status) }}</td><td>{{ c.created_at }}</td>
+      <td><a href="{{ url_for('admin.claim_detail', claim_id=c.id) }}">Open</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">No claims to show.</p>
+{% endif %}
+{% endblock %}

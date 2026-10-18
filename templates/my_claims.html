@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}My claims{% endblock %}
+{% block content %}
+<h1>My claims</h1>
+{% if claims %}
+<div class="table-wrap">
+<table id="claims-table">
+  <thead><tr><th>Item</th><th>Item status</th><th>Your message</th><th>Claim status</th><th>Submitted</th></tr></thead>
+  <tbody>
+  {% for claim in claims %}
+    <tr>
+      <td><a href="{{ url_for('items.detail', item_id=claim.item_id) }}">{{ claim.item_title }}</a></td>
+      <td>{{ m.badge(claim.item_status) }}</td>
+      <td>{{ claim.message or '-' }}</td>
+      <td>{{ m.badge(claim.status) }}</td>
+      <td>{{ claim.created_at }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">You haven't submitted any claims. Find your item under
+  <a href="{{ url_for('items.list_items', type='found') }}">found reports</a>.</p>
+{% endif %}
+{% endblock %}

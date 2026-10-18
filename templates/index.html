@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Lost something on campus? Found something that isn't yours?</h1>
+  <p>Report it here, search what others have reported, and get belongings back to their owners.</p>
+  <form action="{{ url_for('items.list_items') }}" method="get" class="search-row">
+    <input type="search" name="q" placeholder="Search for a wallet, keys, ID card..." aria-label="Search items">
+    <button type="submit" class="btn">Search</button>
+  </form>
+  <div class="hero-actions">
+    <a class="btn btn-secondary" href="{{ url_for('items.report', report_type='lost') }}">I lost something</a>
+    <a class="btn btn-secondary" href="{{ url_for('items.report', report_type='found') }}">I found something</a>
+  </div>
+</section>
+
+<section class="stats">
+  <div><strong>{{ stats['lost'] }}</strong> lost reports</div>
+  <div><strong>{{ stats['found'] }}</strong> found reports</div>
+  <div><strong>{{ stats['returned'] }}</strong> items returned</div>
+</section>
+
+<section>
+  <h2>Latest reports</h2>
+  {% if recent %}
+    <div class="card-grid">
+      {% for item in recent %}{{ m.item_card(item) }}{% endfor %}
+    </div>
+    <p><a href="{{ url_for('items.list_items') }}">See all reports</a></p>
+  {% else %}
+    <p class="empty">No reports yet. Be the first to report a lost or found item.</p>
+  {% endif %}
+</section>
+{% endblock %}
